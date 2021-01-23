@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 T = 10
 delta = 0.01
 iterations = int(T/delta)
-N=[50,100]
+N=[100,200]
 
-model = multi_region(N=N, proportions=[0.2,0.3])
+model = multi_region(N=N, proportions=[0.1,0.1])
 
 spike_train = [[],[]]
 voltages = [[],[]]
@@ -40,7 +40,7 @@ for i in range(len(spike_events)):
     part = 2
     index = 1
 
-    for j in spike_events[i][index]:
+    for j in spike_events[i][index]: # add a spike component to the plot
 
         voltages[i][index][int(j/delta)] = 3
 

@@ -20,12 +20,12 @@ class network:
         self.N = N
         self.lambda_junction = lambda_junction
 
-    def expo(self, x):  # note parameters
+    def expo(self, x):
         return np.exp(2 * x) - 1
 
     def step(self):
 
-        tau1 = np.random.exponential(np.maximum(1/(self.f(self.x)),0.0001))#0.0001 is here to avoid division by 0
+        tau1 = np.random.exponential(1/(self.f(np.maximum(self.x,0.0001))))#0.0001 is here to avoid division by 0
 
         spiked = tau1 <=self.delta
 
@@ -49,7 +49,7 @@ class network:
 
 class network_leaky:
 
-    def __init__(self, N, delta=0.01, start=[], lambda_junction=0.01, leak_rate=0.01, f=None):
+    def __init__(self, N, delta=0.01, start=[], lambda_junction=0.01, leak_rate=0.005, f=None):
 
         if start==[]:
             self.x = np.random.uniform(0,1,N)
@@ -73,7 +73,7 @@ class network_leaky:
 
     def step(self):
 
-        tau1 = np.random.exponential(np.maximum(1/(self.f(self.x)),0.0001))#0.0001 is here to avoid division by 0
+        tau1 = np.random.exponential(1/(self.f(np.maximum(self.x,0.0001))))#0.0001 is here to avoid division by 0
 
         spiked = tau1 <=self.delta
 
@@ -100,8 +100,7 @@ class network_leaky:
 
 class multi_region:
 
-    def __init__(self, N, proportions=[0.1,0.1], weights=[1,-1], nets=[network_leaky,network_leaky], delta=0.01, start=[],
-                 lambda_junction=0.01, leak_rate=0.01, f=None):
+    def __init__(self, N, proportions=[0.1,0.1], weights=[1,-1], nets=[network_leaky,network_leaky]):
 
         self.regions = []
         self.mf_synaptic_weight = []
@@ -116,9 +115,6 @@ class multi_region:
                 self.samples[i].append(np.random.choice([0,1], size=(N[i],N[j]),p=[1-proportions[i],proportions[i]]))
 
             self.samples.append(np.random.choice([0,1], size=()))
-
-        #self.samples = np.array(self.samples)
-        #print(self.samples[i].shape)
 
         self.proportions=proportions
 
@@ -141,7 +137,6 @@ class multi_region:
                 if i!=j:
 
                     self.regions[j].x += self.samples[i][j][np.where(activations[i][0])].sum(axis=0)*self.mf_synaptic_weight[i]
-
 
         return activations
 
